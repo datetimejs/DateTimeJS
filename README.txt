@@ -2,7 +2,7 @@
         DateTimeJS
 ===========================
 
- A JavaScript DateTime class which reproduces and extends all functionality the native JavaScript Date object. 
+ A JavaScript DateTime class which reproduces and extends functionality of the native JavaScript Date object. 
 
 
 ===========================

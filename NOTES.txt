@@ -1,0 +1,154 @@
+---------------------------------
+    DateTime Static Methods
+---------------------------------
+  X .today
+  X .compare
+  X .equals
+  X .isLeapYear
+
+  - .getTimezoneAbbreviation // RENAMED .timezoneAbbreviation
+  - .getTimezoneOffset // RENAMED .timezoneOffset()
+
+  - .getDayNumberFromName // RENAMED .dayNumberFromName()
+  - .getMonthNumberFromName // RENAMED .monthNumberFromName()
+  X .getDaysInMonth // RENAMED .daysInMonth()
+
+  X .fn // expose DateTime.prototype
+
+
+---------------------------------
+    DateTime Instance Methods
+---------------------------------
+
+(core.js)
+  X .clone
+  X .clearTime
+  X .setTimeToNow // RENAMED rename to .resetTime()
+  X .compareTo
+  X .equals
+  X .between
+  - .getElapsed // RENAMED .elapsed()?
+  - .add
+      - addMilliseconds (prefer d1.add(5).days() syntax)
+      - addSeconds // REMOVED
+      - addMinutes // REMOVED
+      - addHours   // REMOVED
+      - addDays    // REMOVED
+      - addWeeks   // REMOVED
+      - addMonths  // REMOVED
+      - addYears   // REMOVED
+  - .set
+      - _validate (not sure if these validate routines are necessary/required)
+      - validateMillisecond
+      - validateSecond
+      - validateMinute
+      - validateHour
+      - validateDay
+      - validateMonth
+      - validateYear
+  - .getWeek // RENAMED renamed to .week()
+  - .setWeek // RENAMED use .week(number)
+  - .toString
+  - .getOrdinalNumber RENAMED renamed to .ordinal() // add new 'set' functionality. d1.ordinal(100) set to 100th day of year.
+
+
+Timezone
+  - .getTimezone // RENAMED renamed to .timezone()
+  - .setTimezoneOffset
+  - .setTimezone // REMOVED use .timezone(...)
+
+
+DaylightSavingTime
+  - .hasDaylightSavingTime
+  - .isDaylightSavingTime  
+
+
+ISO 
+  - .getISOWeek // RENAMED renamed to .isoWeek()
+  - .toISOString
+
+
+UTC
+  - .getUTCOffset // RENAMED renamed to utcOffset()
+
+
+Extras (move to sugar.js)
+  - .is
+  - .isAfter => modify syntax to d1.is().after|before|today() ??
+  - .isBefore
+  - .isToday
+
+  - .moveToFirstDayOfMonth => modify api to enable d1.moveTo().firstDayOfMonth()
+  - .moveToLastDayOfMonth
+  - .moveToNthOccurrence
+  - .moveToDayOfWeek
+  - .moveToMonth
+
+
+(parser.js)
+  - .parse (Static)
+  - .parseExact (Static)
+
+(sugar.js)
+  - .next     // d1.next().friday()
+  - .last     // d1.last().friday()
+  - .same     // d1.same().week(future)
+  - .today    // d1.is().today()
+  - .weekday  // d1.is().weekday()
+  - .at       // d1.at("6:15 pm")
+  - .fromNow  // REMOVED hacked onto Number.prototype
+  - .ago      // REMOVED
+  - .toObject // d1.toObject(); // { year : 2012, month : 1, ... }
+
+  Static Methods
+
+  - .fromObject // REMOVED DateTime.fromObject({ year : 2012, month : 1 }) 
+      Replaced with new DateTime(config)
+  - .next [Static] // DateTime.next().friday()
+  - .last [Static] // DateTime.last().friday()
+
+
+---------------------------------
+            NEW
+---------------------------------
+  X .min         [Static] DateTime Returns the earliest DateTime is an Array of DateTime objects
+  X .max         [Static] DateTime Returns the latest DateTime is an Array of DateTime objects
+  X .inRange     [Static] boolean
+  X .overlapping [Static] boolean
+  - .past // d1.is().past()
+      - could use d1.is().before() which would default to comparing against 'now'
+  - .future // d1.is().future()
+      - could use d1.is().after() which would default to comparing against 'now'
+  - .relative // d1.add(-1).month().relative() "last month"
+      - or, maybe d1.toString('#');
+      - pass in a function to return a custom formatted relative datetime string. 
+        might need to be locale specific. 
+        - d1.add(-1).month().relative(function () {
+            // do something here. 
+        })
+
+      just now
+      one minute ago|"from now"
+      2|59 minutes ago|"from now"
+      one hour ago|"from now"
+      two|23 hours ago|"from now"
+      yesterday
+      one|1 day ago|"from now"
+      two|2-30 days ago|"from now"
+      one|1 week ago|"from now"
+      two|2 weeks ago|"from now"
+      one|1 month ago|"from now"
+      one|2 months ago|"from now"
+      last year
+      next year
+      one|1 year ago|"from now"
+      two|2 years ago|"from now"
+
+
+---------------------------------
+        Locale Specific
+---------------------------------
+  - .ordinalSuffix
+
+
+
