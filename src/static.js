@@ -16,6 +16,15 @@
     $.fn = DateTime.prototype;
 
     /** 
+     * Creates a new DateTime object instance. 
+     * @param  {Stirng|Number|Object|DateTime|Date} Accepts any value permitted by new DateTime constructor. 
+     * @return {DateTime} The new DateTime instance.
+     */
+    $.create = function (val) {
+        return new $(val);
+    };    
+
+    /** 
      * Creates a DateTime that is set to the current date. The time is set to the start of the day (00:00 or 12:00 AM).
      * @return {DateTime}    The current date.
      */

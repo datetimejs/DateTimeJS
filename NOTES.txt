@@ -5,6 +5,7 @@
   X .compare
   X .equals
   X .isLeapYear
+  X. create // creates a new DateTime instance. Calls new DateTime().
 
   - .getTimezoneAbbreviation // RENAMED .timezoneAbbreviation
   - .getTimezoneOffset // RENAMED .timezoneOffset()
