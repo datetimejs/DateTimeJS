@@ -131,16 +131,27 @@ var DateTime;
          * Set the value of year, month, day, hour, minute, second, millisecond of this DateTime instance using given configuration object.
          * Example
         <pre><code>
-        DateTime.today().set( { day : 20, month : 1 } )
+        DateTime.today().set({ day : 20, month : 1 });
 
-        new DateTime().set( { millisecond : 0 } )
+        new DateTime().set({ millisecond : 0 });
         </code></pre>
          * 
-         * @param {Object}   Configuration object containing attributes (month, day, etc.)
-         * @return {DateTime}    this
+         * @param  {Object}   Configuration object containing DateTime properties (month, day, etc.)
+         * @return {DateTime} this
          */
         $.set = function (config) {
-            _.set(config);
+            for (prop in config) {
+                if ($[prop] && typeof(config[prop]) === 'number') {
+                    $[prop](config[prop]);
+                }
+            }
+
+            // validate?
+            // check if day is set to a date within the actual month.
+            // timezone
+            // timezoneOffset
+            // week
+
             return $;
         };
 
