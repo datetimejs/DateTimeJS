@@ -9,6 +9,14 @@
         CHANGELOG
 ===========================
 
+2012-05-16 (geoffreymcgill)
+    Reorganized prototype structure to ensure function creation was only
+    being called once. 
+
+    Added new highly optimized .format() function. 
+        See performance test at http://jsperf.com/date-formatting/6/
+
+
 2012-02-24 (geoffreymcgill)
     Initial commit of DateTime class proof of concept. 
     Some basic methods stubbed out for testing.

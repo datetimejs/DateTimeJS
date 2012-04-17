@@ -2,38 +2,40 @@
  * A JavaScript DateTime class which reproduces and extends functionality of the native JavaScript Date object. 
  */
 
-var DateTime = function (val) { 
-    // To store backing Date object. 
-    // Initialize immediately so we have the exact Date instance this DateTime object was instantiated.
-    this.date = new Date();
-
-    var d = null;
-
-    if (val) {
-        var type = typeof val;  
-
-        if (type === 'string') {
-            d = Date.parse(val);
-        } else if (type === 'number') {
-            d = new Date(val);
-        } else if (val instanceof Date) {
-            d = val;
-        } else if (val instanceof DateTime) {
-            d = val.date;
-        }
-        // Need another 'val' option to pass in a 'config' object literal. 
-        // year, month, day, hour, minute, second, millisecond, locale, etc. 
-    }
-
-    if (d !== null) {
-        this.date = d;
-    }
-
-    delete d;
-};
+var DateTime;
        
 
 (function () {
+    DateTime = function (val) { 
+        // To store backing Date object. 
+        // Initialize immediately so we have the exact Date instance this DateTime object was instantiated.
+        this.date = new Date();
+
+        var d = null;
+
+        if (val) {
+            var type = typeof val;  
+
+            if (type === 'string') {
+                d = Date.parse(val);
+            } else if (type === 'number') {
+                d = new Date(val);
+            } else if (val instanceof Date) {
+                d = val;
+            } else if (val instanceof DateTime) {
+                d = val.date;
+            }
+            // Need another 'val' option to pass in a 'config' object literal. 
+            // year, month, day, hour, minute, second, millisecond, locale, etc. 
+        }
+
+        if (d !== null) {
+            this.date = d;
+        }
+
+        delete d;
+    };
+
     // create a simple alias for the DateTime class. 
     var $ = DateTime;
 
