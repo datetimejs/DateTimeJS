@@ -9,7 +9,7 @@
         CHANGELOG
 ===========================
 
-2012-05-16 (geoffreymcgill)
+2012-04-16 (geoffreymcgill)
     Reorganized prototype structure to ensure function creation was only
     being called once. 
 
