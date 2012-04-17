@@ -19,6 +19,8 @@
     Added new .min build. Can be direct linked from the following location:
         https://raw.github.com/geoffreymcgill/datetimejs/master/src/datetime.min.js
 
+    Added Copyright statement.
+
 
 2012-02-24 (geoffreymcgill)
     Initial commit of DateTime class proof of concept. 
