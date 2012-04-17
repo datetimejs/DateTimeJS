@@ -1,185 +1,267 @@
-// Initial DateTimeJS proof of concept class. 
-
 /**
  * A JavaScript DateTime class which reproduces and extends functionality of the native JavaScript Date object. 
  */
-var DateTime;
+
+var DateTime = function (val) { 
+    // To store backing Date object. 
+    // Initialize immediately so we have the exact Date instance this DateTime object was instantiated.
+    this.date = new Date();
+
+    var d = null;
+
+    if (val) {
+        var type = typeof val;  
+
+        if (type === 'string') {
+            d = Date.parse(val);
+        } else if (type === 'number') {
+            d = new Date(val);
+        } else if (val instanceof Date) {
+            d = val;
+        } else if (val instanceof DateTime) {
+            d = val.date;
+        }
+        // Need another 'val' option to pass in a 'config' object literal. 
+        // year, month, day, hour, minute, second, millisecond, locale, etc. 
+    }
+
+    if (d !== null) {
+        this.date = d;
+    }
+
+    delete d;
+};
+       
 
 (function () {
-    DateTime = function (val) {
-            // To store backing Date object. 
-            // Initialize immediately so we have the exact Date instance this DateTime object was instantiated.
-        var _ = new Date(), 
+    // create a simple alias for the DateTime class. 
+    var $ = DateTime;
 
-            // A temp variable to hold our intial checks of 'val'.
-            d = null,
-            
-            // Careate a simple alias of 'this'
-            $ = this,
-            DATETIME_PROPERTIES = "year month day hours minutes seconds milliseconds".split(' '),
-            DATE_METHODS = "FullYear Month Date Hours Minutes Seconds Milliseconds".split(' '),
-            temp;
+    /** 
+     * The release version of this DateTimeJS library. 
+     */
+    $.version = "2.0.0";
 
-        if (val) {
-            var type = typeof val;  
+    /** 
+     * The DateTime prototype
+     */
+    $.fn = DateTime.prototype;
 
-            if (type === 'string') {
-                d = Date.parse(val);
-            } else if (type === 'number') {
-                d = new Date(val);
-            } else if (val instanceof Date) {
-                d = val;
-            } else if (val instanceof DateTime) {
-                d = val.toDate();
-            }
-            // Need another 'val' option to pass in a 'config' object literal. 
-            // year, month, day, hour, minute, second, millisecond, locale, etc. 
-        }
+    /** 
+     * Creates a new DateTime object instance. 
+     * @param  {Stirng|Number|Object|DateTime|Date} Accepts any value permitted by new DateTime constructor. 
+     * @return {DateTime} The new DateTime instance.
+     */
+    $.create = function (val) {
+        return new $(val);
+    };    
 
-        if (d !== null) {
-            _ = d;
-        }
-
-        delete d;
-
-
-        /* Methods
-        -----------------------------------------------------------------------------------------------*/
-
-        /**
-         * Returns the backing Date object as a Plain Old Date Object.
-         * @return {Date} The Date object
-         */
-        $.toDate = function () {
-            return _;
-        };
-
-        // Make and fill all the DateTime properties. 
-        for (var i = 0; i < DATETIME_PROPERTIES.length; i++) {
-            temp = function (date, prop, method) {
-                this[prop] = function () {
-                    if (arguments.length === 1 && typeof arguments[0] === 'number') {
-                        date['set' + method](arguments[0]);
-                        return this;
-                    }
-
-                    return date['get' + method]();
-                }; 
-
-                // Replicate basic Date 'getter' properties on DateTime
-                this['get' + method] = function () {
-                    return this[prop]();
-                };
-            }.apply($, [_, DATETIME_PROPERTIES[i], DATE_METHODS[i]]);
-        }
-
-        /**
-         * Returns a new DateTime object that is an exact date and time copy of the original instance.
-         * @return {DateTime} A new DateTime instance
-         */
-        $.clone = function () {
-            return new DateTime(this.toDate().getTime()); 
-        };
-
-        /**
-         * Resets the time of this DateTime object to 12:00 AM (00:00), which is the start of the day.
-         * @param {Boolean} .clone() this DateTime instance before clearing Time
-         * @return {DateTime}   this
-         */
-        $.clearTime = function () {
-            return $.hours(0).minutes(0).seconds(0).milliseconds(0);
-        };
-
-        /**
-         * Resets the time of this DateTime object to the current time ('now').
-         * @return {DateTime} this
-         */
-        $.resetTime = function () {
-            var n = new Date();
-            return $.hours(n.getHours()).minutes(n.getMinutes()).seconds(n.getSeconds()).milliseconds(n.getMilliseconds());
-        };
-
-        /**
-         * Compares this instance to another DateTime or Date object and returns an number indication of their relative values.  
-         * @param  {DateTime|Date} The DateTime or Date object to compare [Required]
-         * @return {Number}        -1 = this is lessthan date. 0 = values are equal. 1 = this is greaterthan date.
-         */
-        $.compareTo = function (date) {
-            return DateTime.compare($, date);
-        };
-
-        /**
-         * Compares this instance to another DateTime or Date object and returns true if they are equal.  
-         * @param  {DateTime|Date} The DateTime or Date object to compare. If no date to compare, new Date() [now] is used.
-         * @return {Boolean}       Retruns true if dates are equal, otherwise returns false.
-         */
-        $.equals = function (date) {
-            return DateTime.equals($, date || new Date());
-        };
-
-        /**
-         * Determines if this instance is between a range of two dates or equal to either the start or end dates.
-         * @param {DateTime|Date} Start of range [Required]
-         * @param {DateTime|Date} End of range [Required]
-         * @return {Boolean}      Returns true is this date is between or equal to the start and end dates, else false.
-         */
-        $.between = function (start, end) {
-            return DateTime.inRange($, start, end);
-        };
-
-        /**
-         * Set the value of year, month, day, hour, minute, second, millisecond of this DateTime instance using given configuration object.
-         * Example
-        <pre><code>
-        DateTime.today().set({ day : 20, month : 1 });
-
-        new DateTime().set({ millisecond : 0 });
-        </code></pre>
-         * 
-         * @param  {Object}   Configuration object containing DateTime properties (month, day, etc.)
-         * @return {DateTime} this
-         */
-        $.set = function (config) {
-            for (prop in config) {
-                if ($[prop] && typeof(config[prop]) === 'number') {
-                    $[prop](config[prop]);
-                }
-            }
-
-            // validate?
-            // check if day is set to a date within the actual month.
-            // timezone
-            // timezoneOffset
-            // week
-
-            return $;
-        };
-
-        /**
-         * Converts the value of the current DateTime object to its equivalent string representation.
-         */
-        $.toString = function (format, locale) {
-            if (format && typeof format === 'string') {
-                // TODO:    Need to enable using the locale, or
-                //          just use the this.locale. 
-                return _.toString(format);
-            }
-
-            return _.toString();    
-        };
-
-        /**
-         * Getter and Setter for the Locale object used within this DateTime instance. 
-         * @param {key} Optional The ISO name of the Locale, such as "en-US", 
-         * @return {Locale} The Locale object
-         */
-        $.locale = function () {
-            if (arguments.length === 1) {
-                _.locale = arguments[0];
-                return $;
-            }
-
-            return _.locale;
-        };
+    /** 
+     * Creates a DateTime that is set to the current date. The time is set to the start of the day (00:00 or 12:00 AM).
+     * @return {DateTime}    The current date.
+     */
+    $.today = function () {
+        return new $().clearTime();
     };
+
+    /** 
+     * Creates a DateTime that is set to the current date and time. The time is set to now.
+     * @return {DateTime}    The current date and time.
+     */
+    $.now = function () {
+        return new $();
+    };
+
+    /** 
+     * Compares the first DateTime to the second DateTime and returns an number indication of their relative values.  
+     * @param  {DateTime|Date}     First DateTime object to compare [Required].
+     * @param  {DateTime|Date}     Second DateTime object to compare to [Required].
+     * @return {Number}           -1 = date1 is lessthan date2. 0 = values are equal. 1 = date1 is greaterthan date2.
+     */
+    $.compare = function (date1, date2) {
+        if (date1 instanceof $) {
+            date1 = date1.date;
+        }
+
+        if (date2 instanceof $) {
+            date2 = date2.date;
+        }
+        
+        return date1 < date2 ? -1 : date1 > date2 ? 1 : 0;
+    };
+
+    /** 
+     * Compares the first DateTime object to the second DateTime object and returns true if they are equal.  
+     * @param  {DateTime|Date}     First DateTime object to compare [Required]
+     * @param  {DateTime|Date}     Second DateTime object to compare to [Required]
+     * @return {Boolean} true if dates are equal. false if they are not equal.
+     */
+    $.equals = function (date1, date2) {
+        return $.compare(date1, date2) === 0; 
+    };
+
+    /** 
+     * Determines if the year provided is a LeapYear.
+     * @param  {Number}  The year.
+     * @return {Boolean} true if year is a LeapYear, otherwise false.
+     */
+    $.isLeapYear = function (year) {
+        return ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0); 
+    };
+
+    /**
+     * Gets the number of days in the month, given a year and month value. Automatically corrects for LeapYear.
+     * @param  {Number}  The year.
+     * @param  {Number}  The month (0-11).
+     * @return {Number}  The number of days in the month.
+     */
+    $.daysInMonth = function (year, month) {
+        if (arguments.length < 2) {
+            if (arguments.length === 1) {
+                if (typeof(year) === 'number') {
+                    year = new $().year(year);
+                }
+                
+                return $.daysInMonth(year.getFullYear(), year.getMonth());
+            }
+
+            return $.daysInMonth(new Date());
+        }
+        
+        return [31, ($.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+    };
+
+    var f = [],
+        w = function (val) {
+            return "'+" + val + "+'";
+        },
+        p = function (s, l) {
+            // Simple string padding function.
+            if (!l) {
+                l = 2;
+            }
+            
+            return ("000" + s).slice(l * -1);
+        },
+        ord = function (n) {
+            switch (n * 1) {
+                case 1: 
+                case 21: 
+                case 31: 
+                    return "st";
+                case 2: 
+                case 22: 
+                    return "nd";
+                case 3: 
+                case 23: 
+                    return "rd";
+                default: 
+                    return "th";
+                }
+        },
+        build = function (format) {
+            var temp = format.replace(/(\\)?(do|dd?d?d?|MM?M?M?|yy?y?y?|hh?|HH?|mm?|ss?|tt?|S)/g, function (m) {
+                if (m.charAt(0) === "\\") {
+                    return m.replace("\\", "");
+                }
+
+                switch (m) {
+                    case "yyyy":
+                        return w("p(d.year(), 4)");
+                    case "yy":
+                        return w("p(d.year())");
+
+
+                    case "MMMM":
+                        return "September";
+                    case "MMM":
+                        return "Sep";
+                    case "MM":
+                        return w("p(d.month())");
+                    case "M":
+                        return w("d.month()");
+
+
+                    case "dddd":
+                        return w("d.day()");
+                    case "ddd":
+                        return "Mon";
+                    case "dd":
+                        return w("p(d.day())");
+                    case "d":
+                        return w("d.day()");
+
+                    case "do":
+                        return w("d.day() + ord(d.day())");
+
+
+                    case "HH":
+                        return w("p(d.hours())");
+                    case "H":
+                        return w("d.hours()");
+                    case "hh":
+                        return w("(p(d.hours() < 13 ? (d.hours() === 0 ? 12 : d.hours()) : (d.hours() - 12)))");
+                    case "h":
+                        return w("(d.hours() < 13 ? (d.hours() === 0 ? 12 : d.hours()) : (d.hours() - 12))");
+
+
+                    case "mm":
+                        return w("p(d.minutes())");
+                    case "m":
+                        return w("d.minutes()");
+
+
+                    case "ss":
+                        return w("p(d.seconds())");
+                    case "s":
+                        return w("d.seconds()");
+
+
+                    case "t":
+                        return "am"; //d.hours() < 12 ? $C.amDesignator.substring(0, 1) : $C.pmDesignator.substring(0, 1);
+                    case "tt":
+                        return "AM"; //d.hours() < 12 ? $C.amDesignator : $C.pmDesignator;
+
+
+                    case "S":
+                        return w("ord(d.day())");
+                    default: 
+                        return m;
+                }
+            });
+
+        eval('fn = function (d) { return \'' + temp + '\';}');
+
+        return fn;
+    };
+
+    $.formatFn = function (format, fn) {
+        if (arguments.length === 2) {
+            for (var i = 0; i < f.length; i++) {
+                if (f[i] === format) {
+                    f[i + 1] = fn;
+                    return fn;
+                }
+
+                i++;
+            }
+
+            f[f.length] = format;
+            f[f.length] = fn;
+
+            return fn;     
+        } else {
+            for (var i = 0; i < f.length; i++) {
+                if (f[i] === format) {
+                    return f[i + 1];
+                }
+
+                i++;
+            }
+
+            var fn = build(format);
+
+            return $.formatFn(format, fn);
+        }
+    };  
 })();
