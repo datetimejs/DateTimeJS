@@ -1,8 +1,10 @@
 (function () {
+    "use strict";
+
     /** 
      * The Locale configs
-     */   
-    DateTime.locales = { 
+     */
+    DateTime.locales = {
         key : 'en-US',
         'en-US' : {
             name            : 'en-US',
@@ -10,14 +12,14 @@
             nativeName      : 'English (United States)',
 
             /* Month Name Strings */
-            monthNames      : 'January February March April May June July August September October November December'.split(' '),
-            shortMonthNames : 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' '),
+            monthNames      : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            shortMonthNames : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 
             /* Day Name Strings */
-            dayNames            : 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.split(' '),
-            abbreviatedDayNames : 'Sun Mon Tue Wed Thu Fri Sat'.split(' '),
-            shortDayNames       : 'Su Mo Tu We Th Fr Sa'.split(' '),
-            firstLetterDayNames : 'SMTWTFS'.split(''),
+            dayNames            : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            abbreviatedDayNames : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            shortDayNames       : ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            firstLetterDayNames : ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
 
             /* AM/PM Designators */
             amDesignator : 'AM',
@@ -25,10 +27,10 @@
 
             firstDayOfWeek  : 0,
             twoDigitYearMax : 2029,
-            
+
             /**
              * The dateElementOrder is based on the order of the 
-             * format specifiers in the formatPatterns.DatePattern. 
+             * format specifiers in the formatPatterns.DatePattern.
              *
              * Example:
              <pre>
@@ -85,7 +87,7 @@
              * We will add the modified patterns to the master source files.
              *
              * As well, please review the list of "Future Strings" section below. 
-             */ 
+             */
             regexPatterns : {
                 jan : /^jan(uary)?/i,
                 feb : /^feb(ruary)?/i,
@@ -112,21 +114,21 @@
                 past     : /^last|past|prev(ious)?/i,
                 add      : /^(\+|aft(er)?|from|hence)/i,
                 subtract : /^(\-|bef(ore)?|ago)/i,
-                
+
                 yesterday : /^yes(terday)?/i,
                 today     : /^t(od(ay)?)?/i,
                 tomorrow  : /^tom(orrow)?/i,
                 now       : /^n(ow)?/i,
-                
+
                 millisecond : /^ms|milli(second)?s?/i,
                 second      : /^sec(ond)?s?/i,
                 minute      : /^mn|min(ute)?s?/i,
-                        hour : /^h(our)?s?/i,
-                        week : /^w(eek)?s?/i,
+                hour  : /^h(our)?s?/i,
+                week  : /^w(eek)?s?/i,
                 month : /^m(onth)?s?/i,
                 day   : /^d(ay)?s?/i,
                 year  : /^y(ear)?s?/i,
-                        
+
                 shortMeridian : /^(a|p)/i,
                 longMeridian  : /^(a\.?m?\.?|p\.?m?\.?)/i,
                 timezone      : /^((e(s|d)t|c(s|d)t|m(s|d)t|p(s|d)t)|((gmt)?\s*(\+|\-)\s*\d\d\d\d?)|gmt|utc)/i,
@@ -135,31 +137,31 @@
             },
 
             timezones : [
-                { name : "UTC", offset : "-000" }, 
-                { name : "GMT", offset : "-000" }, 
-                { name : "EST", offset : "-0500" }, 
-                { name : "EDT", offset : "-0400" }, 
-                { name : "CST", offset : "-0600" }, 
-                { name : "CDT", offset : "-0500" }, 
-                { name : "MST", offset : "-0700" }, 
-                { name : "MDT", offset : "-0600" }, 
-                { name : "PST", offset : "-0800" }, 
+                { name : "UTC", offset : "-000" },
+                { name : "GMT", offset : "-000" },
+                { name : "EST", offset : "-0500" },
+                { name : "EDT", offset : "-0400" },
+                { name : "CST", offset : "-0600" },
+                { name : "CDT", offset : "-0500" },
+                { name : "MST", offset : "-0700" },
+                { name : "MDT", offset : "-0600" },
+                { name : "PST", offset : "-0800" },
                 { name : "PDT", offset : "-0700" }],
 
             ord : function (n) {
-                switch (n * 1) {
-                    case 1: 
-                    case 21: 
-                    case 31: 
-                        return 'st';
-                    case 2: 
-                    case 22: 
-                        return 'nd';
-                    case 3: 
-                    case 23: 
-                        return 'rd';
-                    default: 
-                        return 'th';
+                switch (n) {
+                case 1:
+                case 21:
+                case 31:
+                    return 'st';
+                case 2:
+                case 22:
+                    return 'nd';
+                case 3:
+                case 23:
+                    return 'rd';
+                default:
+                    return 'th';
                 }
             }
         },
@@ -174,7 +176,7 @@
             return !key ? this[this.key] : this[key];
         }
     };
-})();
+}());
 
 /********************
  ** Future Strings **

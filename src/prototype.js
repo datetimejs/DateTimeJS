@@ -28,40 +28,119 @@
     ----------------------------------------------------------------------------------------------- */
 
 (function () {
+    "use strict";
+
     var $ = DateTime,
         $$ = $.fn,
 
         // Do NOT modify the following string tokens. These tokens are used to build dynamic functions.
         // All Locale specific strings can be found in the Locale files. See /trunk/src/locale/.
-        DATETIME_PROPERTIES = 'year month day hour minute second millisecond'.split(' '),
-        DAY_NAMES = 'sunday monday tuesday wednesday thursday friday saturday'.split(' '),
-        MONTH_NAMES = 'january february march april may june july august september october november december'.split(' '),
-        DATE_METHODS = 'FullYear Month Date Hours Minutes Seconds Milliseconds'.split(' '),
-        NTH = 'final first second third fourth fifth'.split(' '),
+        DATETIME_PROPERTIES = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
+        DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+        MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
+        DATE_METHODS = ['FullYear', 'Month', 'Date', 'Hours', 'Minutes', 'Seconds', 'Milliseconds'],
+        NTH = ['final', 'first', 'second', 'third', 'fourth', 'fifth'],
 
         _locale = null,
         _orient = null,
         _isSecond = false,
         _is = false,
         _same = false,
-        _ss = function () { 
+        _nth,
+        _ss = function () {
             //ef("Second"),
         },
         temp,
         i;
 
-    for (i = 0; i < NTH.length; i++) {
+    // Make all the DateTime property functions. 
+    for (i = 0; i < DATETIME_PROPERTIES.length; i += 1) {
+        temp = function (prop, method) {
+            this[prop + 's'] = this[prop] = function (val) {
+                var config,
+                    o1,
+                    o2,
+                    v,
+                    k,
+                    i = 0;
+
+                if (arguments.length === 1 && typeof val === 'number') {
+                    this.date['set' + method](val);
+
+                    return this;
+                }
+
+                if (typeof _orient === 'number') {
+                    config = {};
+                    config[prop] = _orient;
+
+                    _orient = null;
+
+                    return this.add(config);
+                }
+
+                // if the .second() function was called earlier, the _orient 
+                // has alread been added. Just return this and reset _isSecond.
+                if (_isSecond === true) {
+                    _isSecond = false;
+
+                    return this;
+                }
+
+                if (_same === true) {
+                    _same = _is = false;
+
+                    o1 = this.toConfig();
+                    o2 = (val || new DateTime()).toConfig();
+                    v = '';
+                    k = prop;
+
+                    for (; i < DATETIME_PROPERTIES.length; i += 1) {
+                        v = DATETIME_PROPERTIES[i].toLowerCase();
+
+                        if (o1[v] !== o2[v]) {
+                            return false;
+                        }
+
+                        if (k === v) {
+                            break;
+                        }
+                    }
+
+                    return true;
+                }
+
+
+                return this.date['get' + method]();
+            };
+
+            // Replicate native JavaScript Date 'getter' & 'setter' methods
+            this['get' + method] = function () {
+                return this[prop]();
+            };
+
+            this['set' + method] = function (val) {
+                return this[prop](val);
+            };
+
+        }.apply($$, [DATETIME_PROPERTIES[i], DATE_METHODS[i]]);
+    }
+
+    for (i = 0; i < NTH.length; i += 1) {
         temp = function (name, index) {
-            this[name] = function () {
+            this[name] = function (val) {
+                var dayOfWeek,
+                    _nth;
+
                 if (_same) {
-                    return _ss(arguments[0]);
+                    return _ss(val);
                 }
 
                 if (dayOfWeek || dayOfWeek === 0) {
-                    return this.moveToNthOccurrence(dayOfWeek, n);
+                    return this.moveToNthOccurrence(dayOfWeek, index);
                 }
-                
-                _nth = n;
+
+                _nth = index;
 
                 // if the operator is 'second' add the _orient, then deal with it later...
                 if (n === 2 && (dayOfWeek === undefined || dayOfWeek === null)) {
@@ -69,30 +148,33 @@
 
                     return this.addSeconds(_orient);
                 }
-                
+
                 return this;
             }
         }.apply($$, [NTH[i], i]);
     }
 
-    for (i = 0; i < DAY_NAMES.length; i++) {
+    for (i = 0; i < DAY_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
-                var t = $.today(), 
+                var t = $.today(),
                     shift = index - t.dow();
 
                 if (t.locale().firstDayOfWeek === 1 && t.dow() !== 0) {
                     shift = shift + 7;
                 }
-                
+
                 return t.add(shift).days();
             };
 
             this.fn[name] = this.fn[name.substring(0, 3)] = function () {
-                if (_is === true) { 
+                var ntemp,
+                    temp;
+
+                if (_is === true) {
                     _is = false;
 
-                    return this.dow() == index; 
+                    return this.dow() === index;
                 }
 
                 if (_nth !== null) {
@@ -115,19 +197,19 @@
                     // make sure we reset _isSecond
                     _isSecond = false;
 
-                    var ntemp = _nth;
+                    ntemp = _nth;
                     _nth = null;
 
-                    var temp = this.clone().moveToLastDayOfMonth();
-                    
-                    this.moveToNthOccurrence(n, ntemp);
-                    
+                    temp = this.clone().moveToLastDayOfMonth();
+
+                    this.moveToNthOccurrence(index, ntemp);
+
                     if (this > temp) {
-                        throw new RangeError($.getDayName(n) + " does not occur " + ntemp + " times in the month of " + $.getMonthName(temp.month()) + " " + temp.year() + ".");
+                        throw new RangeError($.getDayName(index) + " does not occur " + ntemp + " times in the month of " + $.getMonthName(temp.month()) + " " + temp.year() + ".");
                     }
-                    
+
                     return this;
-                }  
+                }
 
                 return this.moveToDayOfWeek(index, _orient);
             };
@@ -136,7 +218,7 @@
         }.apply($, [DAY_NAMES[i], i]);
     }
 
-    for (i = 0; i < MONTH_NAMES.length; i++) {
+    for (i = 0; i < MONTH_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
                 return this.today().set({ month : index, day : 1 });
@@ -145,82 +227,16 @@
 
         temp = function (name, index) {
             this.fn[name] = this.fn[name.substring(0, 3)] = function () {
-                if (_is) { 
+                if (_is) {
                     _is = false;
-                
-                    return this.month(n); 
+
+                    return this.month(index);
                 }
 
-                return this.moveToMonth(index, _orient); 
+                return this.moveToMonth(index, _orient);
             }
 
         }.apply($, [MONTH_NAMES[i], i]);
-    }
-
-    // Make all the DateTime property functions. 
-    for (i = 0; i < DATETIME_PROPERTIES.length; i++) {
-        temp = function (prop, method) {
-            this[prop + 's'] = this[prop] = function () {
-                if (arguments.length === 1 && typeof arguments[0] === 'number') {
-                    this.date['set' + method](arguments[0]);
-
-                    return this;
-                }
-
-                if (typeof _orient === 'number') {
-                    var config = {};
-                    config[prop] = _orient;
-
-                    _orient = null;
-
-                    return this.add(config);
-                }
-
-                // if the .second() function was called earlier, the _orient 
-                // has alread been added. Just return this and reset _isSecond.
-                if (_isSecond === true) {
-                    _isSecond = false;
-
-                    return this;
-                }
-
-                if (_same === true) {
-                    _same = _is = false; 
-
-                    var o1 = this.toConfig(),
-                        o2 = (arguments[0] || new DateTime()).toConfig(),
-                        v = '',
-                        k = prop;
-
-                    for (var i = 0; i < DATETIME_PROPERTIES.length; i++) {
-                        v = DATETIME_PROPERTIES[i].toLowerCase();
-                        
-                        if (o1[v] != o2[v]) {
-                            return false;
-                        }
-
-                        if (k == v) {
-                            break;
-                        }
-                    }
-
-                    return true;
-                }
-                  
-
-                return this.date['get' + method]();
-            };      
-            
-            // Replicate native JavaScript Date 'getter' & 'setter' methods
-            this['get' + method] = function () {
-                return this[prop]();
-            };
-
-            this['set' + method] = function (val) {
-                return this[prop](val);
-            };
-
-        }.apply($$, [DATETIME_PROPERTIES[i], DATE_METHODS[i]]);
     }
 
     /**
@@ -264,12 +280,13 @@
      * @return {DateTime} An object literal representing the original DateTime object.
      */
     $$.toConfig = function () {
-        var obj = {};
+        var obj = {},
+            i = 0;
 
-        for (var i = 0; i < DATETIME_PROPERTIES.length; i++) {
+        for (; i < DATETIME_PROPERTIES.length; i += 1) {
             obj[DATETIME_PROPERTIES[i].toLowerCase()] = this[DATETIME_PROPERTIES[i]]();
         }
-        
+
         return obj;
     };
 
@@ -331,7 +348,7 @@
         _is = true;
 
         return this;
-    };    
+    };
 
     /** 
      * Determines if two DateTime objects occur on/in exactly the same instance of the subsequent date part function.
@@ -367,12 +384,12 @@
     </code></pre>
      *  
      * @return {Boolean}    true|false
-     */    
-    $$.same = function () { 
+     */
+    $$.same = function () {
         _same = true;
         _isSecond = false;
 
-        return this; 
+        return this;
     };
 
     /** 
@@ -387,7 +404,7 @@
     </code></pre>
      *  
      * @return {Boolean}    true|false
-     */    
+     */
     $$.today = function () {
         if (_is === true) {
             _is = false;
@@ -414,7 +431,7 @@
      */
     $$.at = function (time) {
         return (typeof time === 'string') ? $.parse(this.format('yyyy-MM-dd ') + time) : this.set(time);
-    }; 
+    };
 
 
     /** 
@@ -427,7 +444,7 @@
      * @return {Boolean} true|false
      */
     $$.weekday = function () {
-        if (_is) { 
+        if (_is) {
             _is = false;
 
             var dow = this.dow();
@@ -436,14 +453,14 @@
         }
 
         return false;
-    };    
+    };
 
     /**
      * Returns a new DateTime object that is an exact date and time copy of the original instance.
      * @return {DateTime} A new DateTime instance
      */
     $$.clone = function () {
-        return new DateTime(this.date.getTime()); 
+        return new DateTime(this.date.getTime());
     };
 
     /**
@@ -508,7 +525,7 @@
      */
     $$.isBefore = function (val) {
         return (this.compareTo(val || new DateTime()) === -1);
-    };    
+    };
 
     /**
      * Set the value of year, month, day, hour, minute, second, millisecond of this DateTime instance using given configuration object.
@@ -523,8 +540,10 @@
      * @return {DateTime} this
      */
     $$.set = function (config) {
+        var prop;
+
         for (prop in config) {
-            if (this[prop] && typeof(config[prop]) === 'number') {
+            if (this[prop] && typeof config[prop] === 'number') {
                 this[prop](config[prop]);
             }
         }
@@ -540,14 +559,16 @@
     };
 
     $$.add = function (config) {
-        if (typeof config == 'number') {
+        var prop;
+
+        if (typeof config === 'number') {
             _orient = config;
 
-            return this;    
+            return this;
         }
 
         for (prop in config) {
-            if (this[prop] && typeof(config[prop] === 'number')) {
+            if (this[prop] && typeof config[prop] === 'number') {
                 this[prop](this[prop]() + config[prop]);
             }
         }
@@ -564,7 +585,7 @@
      */
     $$.week = function () {
         var a, b, c, d, e, f, g, n, s, w, $y, $m, $d;
-        
+
         $y = (!$y) ? this.year() : $y;
         $m = (!$m) ? this.month() + 1 : $m;
         $d = (!$d) ? this.day() : $d;
@@ -584,7 +605,7 @@
             e = s + 1;
             f = $d + ((153 * ($m - 3) + 2) / 5) + 58 + s;
         }
-        
+
         g = (a + b) % 7;
         d = (f + g - e) % 7;
         n = (f + 3 - d) | 0;
@@ -596,9 +617,9 @@
         } else {
             w = (n / 7 | 0) + 1;
         }
-        
+
         $y = $m = $d = null;
-        
+
         return w;
     };
 
@@ -619,7 +640,7 @@
             if (this.dow() !== dayOfWeek) {
                 this.moveToDayOfWeek(dayOfWeek, -1);
             }
-            
+
             return this;
         }
 
@@ -638,7 +659,7 @@
      * Moves the DateTime to the last day of the month.
      * @return {DateTime}    this
      */
-    $$.moveToLastDayOfMonth = function () { 
+    $$.moveToLastDayOfMonth = function () {
         return this.set({ day : $.getDaysInMonth(this.year(), this.month())});
     };
 
@@ -670,16 +691,16 @@
      * Indicates whether Daylight Saving Time is observed in the current time zone.
      * @return {Boolean} true|false
      */
-    $$.hasDaylightSavingTime = function () { 
+    $$.hasDaylightSavingTime = function () {
         return (DateTime.today().set({month : 0, day : 1}).getTimezoneOffset() !== DateTime.today().set({month : 6, day : 1}).getTimezoneOffset());
     };
-    
+
     /**
      * Indicates whether this Date instance is within the Daylight Saving Time range for the current time zone.
      * @return {Boolean} true|false
      */
     $$.isDaylightSavingTime = function () {
-        return DateTime.today().set({month : 0, day : 1}).getTimezoneOffset() != this.getTimezoneOffset();
+        return DateTime.today().set({month : 0, day : 1}).getTimezoneOffset() !== this.getTimezoneOffset();
     };
 
     /**
@@ -691,14 +712,14 @@
     };
 
     $$.setTimezoneOffset = function (offset) {
-        var here = this.getTimezoneOffset(), 
+        var here = this.getTimezoneOffset(),
             there = Number(offset) * -6 / 10;
 
-        return this.addMinutes(there - here); 
+        return this.addMinutes(there - here);
     };
 
-    $$.setTimezone = function (offset) { 
-        return this.setTimezoneOffset($.getTimezoneOffset(offset)); 
+    $$.setTimezone = function (offset) {
+        return this.setTimezoneOffset($.getTimezoneOffset(offset));
     };
 
     /**
@@ -706,18 +727,21 @@
      * @return {String} The 4-character offset string prefixed with + or - (e.g. "-0500")
      */
     $$.getUTCOffset = function () {
-        var n = this.getTimezoneOffset() * -10 / 6, r;
+        var n = this.getTimezoneOffset() * -10 / 6,
+            r;
 
-        if (n < 0) { 
-            r = (n - 10000).toString(); 
+        if (n < 0) {
+            r = (n - 10000).toString();
 
-            return r.charAt(0) + r.substr(2); 
-        } else { 
+            r = r.charAt(0) + r.substr(2);
+        } else {
             r = (n + 10000).toString();
 
-            return '+' + r.substr(1); 
+            r = '+' + r.substr(1);
         }
-    }; 
+
+        return r;
+    };
 
     /**
      * Returns the number of milliseconds between this date and date.
@@ -746,7 +770,7 @@
             f(d.getUTCHours())     + ':' +
             f(d.getUTCMinutes())   + ':' +
             f(d.getUTCSeconds())   + 'Z"';
-    };    
+    };
 
     /**
      * Converts the value of the current DateTime object to its equivalent string representation.
@@ -778,6 +802,8 @@
             return _locale;
         }
 
-        return _locale = DateTime.locales.add(locale);
+        _locale = DateTime.locales.add(locale);
+
+        return _locale;
     };
-})();
+}());

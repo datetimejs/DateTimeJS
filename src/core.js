@@ -23,27 +23,34 @@
  *      http://www.datetimejs.com/
  *      https://github.com/geoffreymcgill/DateTimeJS
  */
- 
+
 /**
  * A JavaScript DateTime class which reproduces and extends functionality of the native JavaScript Date object. 
  */
- 
+
 var DateTime;
- 
+
 (function () {
+    "use strict";
+
     // Contructor
-    DateTime = function (val) { 
+    DateTime = function (val) {
         // To store backing Date object. 
         // Initialize immediately so we have the exact Date instance this DateTime object was instantiated.
         this.date = new Date();
- 
-        var d = null;
- 
-        if (val) {
-            var type = typeof val;  
 
+        var d = null,
+            type = typeof val,
+            DATETIME_PROPERTIES,
+            i = 0;
+
+        if (arguments.length === 1) {
             if (type === 'string') {
-                d = DateTime.parse(val).date;
+                d = DateTime.parse(val);
+
+                if (d !== null) {
+                    d = d.date;
+                }
             } else if (type === 'number') {
                 d = new Date(val);
             } else if (type === 'object') {
@@ -53,56 +60,71 @@ var DateTime;
             } else if (val instanceof DateTime) {
                 d = val.date;
             }
+        } else if (arguments.length > 1) {
+            d = new DateTime();
+
+            // Need to combine core.js and prototype together so
+            // we can get this DATETIME_PROPERTIES from one common location. 
+            // For now we're reproducing the array. 
+            DATETIME_PROPERTIES = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+
+            for (i; i < arguments.length; i += 1) {
+                d[DATETIME_PROPERTIES[i]](arguments[i]);
+            }
+
+            d = d.date;
         }
 
         if (d !== null) {
             this.date = d;
         }
- 
-        delete d;
     };
- 
+
     // create a simple alias for the DateTime class. 
     var $ = DateTime,
-        isArray = function (o) {
+        isArray = function (obj) {
             // Courtesy of 
             // http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
-            return Object.prototype.toString.call(o) === '[object Array]';
-        };
- 
+            return Object.prototype.toString.call(obj) === '[object Array]';
+        },
+        f = [],
+        wrap,
+        p,
+        build;
+
     /** 
      * The release version of this DateTimeJS library. 
      */
     $.version = "2.0.0";
- 
+
     /** 
      * The DateTime prototype
      */
     $.fn = DateTime.prototype;
- 
+
     /** 
      * Creates a new DateTime object instance. 
      * @param  {Stirng|Number|Object|DateTime|Date} Accepts any value permitted by new DateTime constructor. 
      * @return {DateTime} The new DateTime instance.
      */
     $.create = function (val) {
-        return new $(val);
-    };    
- 
+        return new DateTime(val);
+    };
+
     /** 
      * Creates a DateTime that is set to the current date. The time is set to the start of the day (00:00 or 12:00 AM).
      * @return {DateTime}    The current date.
      */
     $.today = function () {
-        return new $().clearTime();
+        return new DateTime().clearTime();
     };
- 
+
     /** 
      * Creates a DateTime that is set to the current date and time. The time is set to now.
      * @return {DateTime}    The current date and time.
      */
     $.now = function () {
-        return new $();
+        return new DateTime();
     };
 
     /** 
@@ -119,11 +141,11 @@ var DateTime;
     </code></pre>
      * 
      * @return {DateTime}    date
-     */    
+     */
     $.next = function () {
         return $.today().next();
-    };    
- 
+    };
+
     /** 
      * Creates a new DateTime instance (DateTime.today()) and moves the date to the previous 
      * instance of the date as specified by the subsequent date element function 
@@ -141,7 +163,7 @@ var DateTime;
      */
     $.last = $.prev = $.previous = function () {
         return $.today().last();
-    }; 
+    };
 
     /** 
      * Compares the first DateTime to the second DateTime and returns an number indication of their relative values.  
@@ -153,14 +175,14 @@ var DateTime;
         if (date1 instanceof $) {
             date1 = date1.date;
         }
- 
+
         if (date2 instanceof $) {
             date2 = date2.date;
         }
-        
+
         return date1 < date2 ? -1 : date1 > date2 ? 1 : 0;
     };
- 
+
     /** 
      * Compares the first DateTime object to the second DateTime object and returns true if they are equal.  
      * @param  {DateTime|Date}     First DateTime object to compare [Required]
@@ -168,15 +190,15 @@ var DateTime;
      * @return {Boolean} true if dates are equal. false if they are not equal.
      */
     $.equals = function (date1, date2) {
-        return $.compare(date1, date2) === 0; 
+        return $.compare(date1, date2) === 0;
     };
- 
+
     /**
      * Returns the ealiest DateTime or Date object from an Array of DateTime or Date objects. 
      * The Array can contain a mix of DateTime and Date object. 
      * @param  {Array}         An Array of DateTime or Date objects
      * @return {DateTime|Date} The ealiest DateTime or Date object from the Array. 
-     */ 
+     */
     $.min = function (dates) {
         return isArray(dates) ? dates.sort($.compare)[0] : null;
     };
@@ -186,7 +208,7 @@ var DateTime;
      * The Array can contain a mix of DateTime and Date object. 
      * @param  {Array}         An Array of DateTime or Date objects
      * @return {DateTime|Date} The latest DateTime or Date object from the Array. 
-     */ 
+     */
     $.max = function (dates) {
         return isArray(dates) ? dates.sort($.compare)[dates.length - 1] : null;
     };
@@ -198,7 +220,7 @@ var DateTime;
      * @param  {DateTime|Date} The start DateTime or Date to compare. 
      * @param  {DateTime|Date} The end DateTime or Date to compare.
      * @return {boolean}       Return true is the date is between the start and end dates, otherwise false. 
-     */ 
+     */
     $.inRange = function (date, start, end) {
         return $.compare(date, start) > -1 && $.compare(date, end) < 1;
     };
@@ -227,9 +249,9 @@ var DateTime;
      * @return {Boolean} true if year is a LeapYear, otherwise false.
      */
     $.isLeapYear = function (year) {
-        return ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0); 
+        return ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0);
     };
- 
+
     /**
      * Gets the number of days in the month, given a year and month value. Automatically corrects for LeapYear.
      * @param  {Number}  The year.
@@ -237,18 +259,20 @@ var DateTime;
      * @return {Number}  The number of days in the month.
      */
     $.daysInMonth = function (year, month) {
+        var temp = year;
+
         if (arguments.length < 2) {
             if (arguments.length === 1) {
-                if (typeof(year) === 'number') {
-                    year = new $().year(year);
+                if (typeof year === 'number') {
+                    temp = new DateTime().year(year);
                 }
-                
+
                 return $.daysInMonth(year.getFullYear(), year.getMonth());
             }
- 
+
             return $.daysInMonth(new Date());
         }
-        
+
         return [31, ($.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
     };
 
@@ -258,18 +282,20 @@ var DateTime;
      * @return {Number}  The day number
      */
     $.dayNumberFromName = function (name) {
-        var _ = $.locales.get(),
-            n = _.dayNames, 
-            m = _.abbreviatedDayNames, 
-            o = _.shortDayNames, 
-            s = name.toLowerCase();
+        var loc = $.locales.get(),
+            n = loc.dayNames,
+            m = loc.abbreviatedDayNames,
+            o = loc.shortDayNames,
+            s = name.toLowerCase(),
+            i = 0;
 
-        for (var i = 0; i < n.length; i++) { 
-            if (n[i].toLowerCase() === s || m[i].toLowerCase() === s || o[i].toLowerCase() === s) { 
-                return i; 
+        for (i; i < n.length; i += 1) {
+            if (n[i].toLowerCase() === s || m[i].toLowerCase() === s || o[i].toLowerCase() === s) {
+                return i;
             }
         }
-        return -1;  
+
+        return -1;
     };
 
     /**
@@ -278,132 +304,138 @@ var DateTime;
      * @return {Number} The day number
      */
     $.monthNumberFromName = function (name) {
-        var _ = $.locales.get(),
-            n = _.monthNames, 
-            m = _.abbreviatedMonthNames, 
-            s = name.toLowerCase();
+        var loc = $.locales.get(),
+            n = loc.monthNames,
+            m = loc.abbreviatedMonthNames,
+            s = name.toLowerCase(),
+            i = 0;
 
-        for (var i = 0; i < n.length; i++) {
-            if (n[i].toLowerCase() == s || m[i].toLowerCase() == s) { 
-                return i; 
+        for (i; i < n.length; i += 1) {
+            if (n[i].toLowerCase() === s || m[i].toLowerCase() === s) {
+                return i;
             }
         }
 
         return -1;
     };
- 
-    var f = [],
-        wrap = function (val) {
-            return "'+" + val + "+'";
-        },
-        p = function (s, l) {
-            // Simple string padding function.
-            if (!l) {
-                l = 2;
-            }
-            
-            return ("000" + s).slice(l * -1);
-        },
-        build = function (format) {
-            var temp = format.replace(/(\\)?(do|dd?d?d?|MM?M?M?|yy?y?y?|hh?|HH?|mm?|ss?|tt?|S)/g, function (m) {
+
+    f = [];
+    wrap = function (val) {
+        return "'+" + val + "+'";
+    };
+    p = function (s, l) {
+        // Simple string padding function.
+        if (!l) {
+            l = 2;
+        }
+
+        return ("000" + s).slice(l * -1);
+    };
+
+    build = function (format) {
+        var fn,
+            temp = format.replace(/(\\)?(do|dd?d?d?|MM?M?M?|yy?y?y?|hh?|HH?|mm?|ss?|tt?|S)/g, function (m) {
                 if (m.charAt(0) === "\\") {
                     return m.replace("\\", "");
                 }
- 
-                switch (m) {
-                    case "yyyy":
-                        return wrap("p(d.year(), 4)");
-                    case "yy":
-                        return wrap("p(d.year())");
- 
- 
-                    case "MMMM":
-                        return wrap("d.locale().monthNames[d.month()]");
-                    case "MMM":
-                        return wrap("d.locale().shortMonthNames[d.month()]");
-                    case "MM":
-                        return wrap("p(d.month())");
-                    case "M":
-                        return wrap("d.month()");
 
- 
-                    case "dddd":
-                        return wrap("d.locale().dayNames[d.date.getDay()]");
-                    case "ddd":
-                        return wrap("d.locale().shortDayNames[d.date.getDay()]");
-                    case "dd":
-                        return wrap("p(d.day())");
-                    case "d":
-                        return wrap("d.day()");
-                    case "do":
-                        return wrap("d.day() + d.locale().ord(d.day())");
- 
- 
-                    case "HH":
-                        return wrap("p(d.hours())");
-                    case "H":
-                        return wrap("d.hours()");
-                    case "hh":
-                        return wrap("(p(d.hours() < 13 ? (d.hours() === 0 ? 12 : d.hours()) : (d.hours() - 12)))");
-                    case "h":
-                        return wrap("(d.hours() < 13 ? (d.hours() === 0 ? 12 : d.hours()) : (d.hours() - 12))");
- 
- 
-                    case "mm":
-                        return wrap("p(d.minutes())");
-                    case "m":
-                        return wrap("d.minutes()");
- 
- 
-                    case "ss":
-                        return wrap("p(d.seconds())");
-                    case "s":
-                        return wrap("d.seconds()");
- 
- 
-                    case "t":
-                        return wrap("(d.hours() < 12 ? d.locale().amDesignator.substring(0, 1) : d.locale().pmDesignator.substring(0, 1))");
-                    case "tt":
-                        return wrap("(d.hours() < 12 ? d.locale().amDesignator : d.locale().pmDesignator)");
- 
- 
-                    case "S":
-                        return wrap("d.locale().ord(d.day())");
-                    default: 
-                        return m;
+                switch (m) {
+                case "yyyy":
+                    return wrap("p(d.year(), 4)");
+                case "yy":
+                    return wrap("p(d.year())");
+
+
+                case "MMMM":
+                    return wrap("d.locale().monthNames[d.month()]");
+                case "MMM":
+                    return wrap("d.locale().shortMonthNames[d.month()]");
+                case "MM":
+                    return wrap("p(d.month())");
+                case "M":
+                    return wrap("d.month()");
+
+
+                case "dddd":
+                    return wrap("d.locale().dayNames[d.date.getDay()]");
+                case "ddd":
+                    return wrap("d.locale().shortDayNames[d.date.getDay()]");
+                case "dd":
+                    return wrap("p(d.day())");
+                case "d":
+                    return wrap("d.day()");
+                case "do":
+                    return wrap("d.day() + d.locale().ord(d.day())");
+
+
+                case "HH":
+                    return wrap("p(d.hours())");
+                case "H":
+                    return wrap("d.hours()");
+                case "hh":
+                    return wrap("(p(d.hours() < 13 ? (d.hours() === 0 ? 12 : d.hours()) : (d.hours() - 12)))");
+                case "h":
+                    return wrap("(d.hours() < 13 ? (d.hours() === 0 ? 12 : d.hours()) : (d.hours() - 12))");
+
+
+                case "mm":
+                    return wrap("p(d.minutes())");
+                case "m":
+                    return wrap("d.minutes()");
+
+
+                case "ss":
+                    return wrap("p(d.seconds())");
+                case "s":
+                    return wrap("d.seconds()");
+
+
+                case "t":
+                    return wrap("(d.hours() < 12 ? d.locale().amDesignator.substring(0, 1) : d.locale().pmDesignator.substring(0, 1))");
+                case "tt":
+                    return wrap("(d.hours() < 12 ? d.locale().amDesignator : d.locale().pmDesignator)");
+
+
+                case "S":
+                    return wrap("d.locale().ord(d.day())");
+                default:
+                    return m;
                 }
             });
- 
+
         eval('fn = function (d) { return \'' + temp + '\';}');
- 
+
         return fn;
     };
- 
+
     $.formatFn = function (format, fn) {
+        var i = 0;
+
         if (arguments.length === 2) {
-            for (var i = 0; i < f.length; i++) {
+            for (i; i < f.length; i += 1) {
                 if (f[i] === format) {
                     f[i + 1] = fn;
+
                     return fn;
                 }
- 
-                i++;
+
+                i += 1;
             }
- 
+
             f[f.length] = format;
             f[f.length] = fn;
- 
-            return fn;     
         } else {
-            for (var i = 0; i < f.length; i++) {
+            for (i; i < f.length; i += 1) {
                 if (f[i] === format) {
                     return f[i + 1];
                 }
- 
-                i++;
+
+                i += 1;
             }
- 
+
             return $.formatFn(format, build(format));
         }
-    };  
-})();
+
+        return fn;
+    };
+}());
