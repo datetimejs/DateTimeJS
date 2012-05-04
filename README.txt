@@ -9,6 +9,12 @@
         CHANGELOG
 ===========================
 
+2012-05-03 (geoffreymcgill)
+    Import of DateJS Parser. 
+
+    Script formatting and passing through JSLint (http://www.jslint.com)
+
+
 2012-04-16 (geoffreymcgill)
     Reorganized prototype structure to ensure function creation was only
     being called once. 
