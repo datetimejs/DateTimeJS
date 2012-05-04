@@ -10,6 +10,12 @@ http://www.datetimejs.com/
         CHANGELOG
 ===========================
 
+2012-05-04 (geoffreymcgill)
+    Moved project to http://github.com/datetimejs/.
+
+    Updated copyright statement. 
+
+
 2012-05-03 (geoffreymcgill)
     Import of DateJS Parser. 
 
