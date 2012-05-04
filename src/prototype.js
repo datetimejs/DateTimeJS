@@ -21,7 +21,7 @@
  *  
  *  See also:
  *      http://www.datetimejs.com/
- *      https://github.com/geoffreymcgill/DateTimeJS
+ *      https://github.com/datetimejs/DateTimeJS
  */
 
 /* DateTime prototype 
@@ -143,14 +143,14 @@
                 _nth = index;
 
                 // if the operator is 'second' add the _orient, then deal with it later...
-                if (n === 2 && (dayOfWeek === undefined || dayOfWeek === null)) {
+                if (index === 2 && (dayOfWeek === undefined || dayOfWeek === null)) {
                     _isSecond = true;
 
                     return this.addSeconds(_orient);
                 }
 
                 return this;
-            }
+            };
         }.apply($$, [NTH[i], i]);
     }
 
@@ -222,7 +222,7 @@
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
                 return this.today().set({ month : index, day : 1 });
-            }
+            };
         }.apply($, [MONTH_NAMES[i], i]);
 
         temp = function (name, index) {
@@ -234,7 +234,7 @@
                 }
 
                 return this.moveToMonth(index, _orient);
-            }
+            };
 
         }.apply($, [MONTH_NAMES[i], i]);
     }

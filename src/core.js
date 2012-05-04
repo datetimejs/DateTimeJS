@@ -21,7 +21,7 @@
  *  
  *  See also:
  *      http://www.datetimejs.com/
- *      https://github.com/geoffreymcgill/DateTimeJS
+ *      https://github.com/datetimejs/DateTimeJS
  */
 
 /**
@@ -68,7 +68,7 @@ var DateTime;
             // For now we're reproducing the array. 
             DATETIME_PROPERTIES = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 
-            for (i; i < arguments.length; i += 1) {
+            for (; i < arguments.length; i += 1) {
                 d[DATETIME_PROPERTIES[i]](arguments[i]);
             }
 
@@ -289,7 +289,7 @@ var DateTime;
             s = name.toLowerCase(),
             i = 0;
 
-        for (i; i < n.length; i += 1) {
+        for (; i < n.length; i += 1) {
             if (n[i].toLowerCase() === s || m[i].toLowerCase() === s || o[i].toLowerCase() === s) {
                 return i;
             }
@@ -310,7 +310,7 @@ var DateTime;
             s = name.toLowerCase(),
             i = 0;
 
-        for (i; i < n.length; i += 1) {
+        for (; i < n.length; i += 1) {
             if (n[i].toLowerCase() === s || m[i].toLowerCase() === s) {
                 return i;
             }
@@ -412,7 +412,7 @@ var DateTime;
         var i = 0;
 
         if (arguments.length === 2) {
-            for (i; i < f.length; i += 1) {
+            for (; i < f.length; i += 1) {
                 if (f[i] === format) {
                     f[i + 1] = fn;
 
@@ -425,7 +425,7 @@ var DateTime;
             f[f.length] = format;
             f[f.length] = fn;
         } else {
-            for (i; i < f.length; i += 1) {
+            for (; i < f.length; i += 1) {
                 if (f[i] === format) {
                     return f[i + 1];
                 }

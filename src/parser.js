@@ -21,7 +21,7 @@
  *  
  *  See also:
  *      http://www.datetimejs.com/
- *      https://github.com/geoffreymcgill/DateTimeJS
+ *      https://github.com/datetimejs/DateTimeJS
  */
 
 (function () {
@@ -136,7 +136,7 @@
                     rx = [],
                     i = 0;
 
-                for (i; i < px.length; i += 1) {
+                for (; i < px.length; i += 1) {
                     rx.push(_.each(px[i], qx));
                 }
 
@@ -168,7 +168,7 @@
                     var r = null,
                         i = 0;
 
-                    for (i; i < px.length; i += 1) {
+                    for (; i < px.length; i += 1) {
                         if (px[i] == null) {
                             continue;
                         }
@@ -195,7 +195,7 @@
                         r = null,
                         i = 0;
 
-                    for (i; i < px.length; i += 1) {
+                    for (; i < px.length; i += 1) {
                         if (px[i] == null) {
                             continue;
                         }
@@ -235,7 +235,7 @@
                         rx = [],
                         i = 0;
 
-                    for (i; i < px.length; i += 1) {
+                    for (; i < px.length; i += 1) {
                         try {
                             r = px[i].call(this, s);
                         } catch (e) {
@@ -311,7 +311,7 @@
                         i = 0;
 
                     // go through the rules in the given set
-                    for (i; i < px.length; i += 1) {
+                    for (; i < px.length; i += 1) {
 
                         // last is a flag indicating whether this must be the last element
                         // if there is only 1 element, then it MUST be the last one
@@ -546,7 +546,7 @@
         flattenAndCompact = function (ax) {
             var rx = [];
 
-            for (i; i < ax.length; i += 1) {
+            for (; i < ax.length; i += 1) {
                 if (ax[i] instanceof Array) {
                     rx = rx.concat(flattenAndCompact(ax[i]));
                 } else {
@@ -633,7 +633,7 @@
 
             x = (x instanceof Array) ? x : [ x ];
 
-            for (i; i < x.length; i += 1) {
+            for (; i < x.length; i += 1) {
                 if (x[i]) {
                     x[i].call(this);
                 }
@@ -701,7 +701,7 @@
                 return null;
             }
 
-            for (i; i < x.length; i += 1) {
+            for (; i < x.length; i += 1) {
                 if (typeof x[i] == "function") {
                     x[i].call(this);
                 }
@@ -847,7 +847,7 @@
                 px = [],
                 i = 0;
 
-            for (i; i < kx.length; i += 1) {
+            for (; i < kx.length; i += 1) {
                 px.push(_.replace(_.rtoken(c[kx[i]]), kx[i]));
             }
 
@@ -1012,7 +1012,7 @@
             var rx = [],
                 i = 0;
 
-            for (i; i < fx.length; i += 1) {
+            for (; i < fx.length; i += 1) {
                 rx.push(_get(fx[i]));
             }
             

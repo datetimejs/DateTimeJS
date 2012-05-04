@@ -4,6 +4,7 @@
 
  A JavaScript DateTime class which reproduces and extends functionality of the native JavaScript Date object. 
 
+http://www.datetimejs.com/
 
 ===========================
         CHANGELOG
