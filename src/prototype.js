@@ -584,7 +584,19 @@
      * The .getWeek() function does NOT convert the date to UTC. The local datetime is used. Please use .getISOWeek() to get the week of the UTC converted date.
      * @return {Number}  1 to 53
      */
-    $$.week = function () {
+    $$.weeks = $$.week = function (val) {
+        if (arguments.length === 1 && typeof val === 'number') {
+            return this.add(val * 7).days();
+        }
+
+        if (typeof _orient === 'number') {
+            var config = {  week : _orient * 1 };
+
+            _orient = null;
+
+            return this.add(config);
+        }
+        
         var a, b, c, d, e, f, g, n, s, w, $y, $m, $d;
 
         $y = (!$y) ? this.year() : $y;
