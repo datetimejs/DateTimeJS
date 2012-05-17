@@ -61,7 +61,7 @@ var DateTime;
                 d = val.date;
             }
         } else if (arguments.length > 1) {
-            d = new DateTime();
+            d = DateTime.today();
 
             // Need to combine core.js and prototype together so
             // we can get this DATETIME_PROPERTIES from one common location. 
