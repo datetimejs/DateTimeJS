@@ -815,8 +815,6 @@
                 this.day = this.days;
             }
 
-            delete this.days;
-
             return today[expression ? 'add' : 'set'](this);
         }
     };
