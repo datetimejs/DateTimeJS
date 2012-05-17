@@ -1,0 +1,54 @@
+<html>
+<head>
+  <title>DateTimeJS Unit Tests</title>
+  <!-- Jasmine lib files -->
+  <link rel="stylesheet" type="text/css" href="lib/jasmine/jasmine.css">
+  <script type="text/javascript" src="lib/jasmine/jasmine.js"></script>
+  <script type="text/javascript" src="lib/jasmine/jasmine-html.js"></script>
+
+  <!-- DateTimeJS source files -->
+  <script type="text/javascript" src="../../src/core.js"></script>
+  <script type="text/javascript" src="../../src/prototype.js"></script>
+  <script type="text/javascript" src="../../src/locale.js"></script>
+  <script type="text/javascript" src="../../src/parser.js"></script>
+  <!--script type="text/javascript" src="../../src/parse.js"></script-->
+
+  <!-- Unit test specs -->
+  <script type="text/javascript" src="spec/core.js"></script>
+  <script type="text/javascript" src="spec/parsing.js"></script>
+
+  <!-- Launch the test harness -->
+  <script type="text/javascript">
+    (function() {
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
+
+      var htmlReporter = new jasmine.HtmlReporter();
+
+      jasmineEnv.addReporter(htmlReporter);
+
+      jasmineEnv.specFilter = function(spec) {
+        return htmlReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function execJasmine() {
+        jasmineEnv.execute();
+      }
+
+    })();
+  </script>
+
+</head>
+
+<body>
+</body>
+</html>
