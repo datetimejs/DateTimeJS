@@ -51,10 +51,10 @@
             //ef("Second"),
         },
         temp,
-        i;
+        i = 0;
 
     // Make all the DateTime property functions. 
-    for (var i = 0; i < DATETIME_PROPERTIES.length; i += 1) {
+    for (; i < DATETIME_PROPERTIES.length; i += 1) {
         temp = function (prop, method) {
             this[prop + 's'] = this[prop] = function (val) {
                 var config,
@@ -126,8 +126,8 @@
         }.apply($$, [DATETIME_PROPERTIES[i], DATE_METHODS[i]]);
     }
 
-    /*
-    for (var i = 0; i < NTH.length; i += 1) {
+    
+    for (i = 0; i < NTH.length; i += 1) {
         temp = function (name, index) {
             this[name] = function (val) {
                 var dayOfWeek,
@@ -147,16 +147,15 @@
                 if (index === 2 && (dayOfWeek === undefined || dayOfWeek === null)) {
                     _isSecond = true;
 
-                    return this.addSeconds(_orient);
+                    return this.add(_orient).seconds();
                 }
 
                 return this;
             };
         }.apply($$, [NTH[i], i]);
     }
-    */
-
-    for (var i = 0; i < DAY_NAMES.length; i += 1) {
+    
+    for (i = 0; i < DAY_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
                 var t = $.today(),
@@ -220,7 +219,7 @@
         }.apply($, [DAY_NAMES[i], i]);
     }
 
-    for (var i = 0; i < MONTH_NAMES.length; i += 1) {
+    for (i = 0; i < MONTH_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
                 return this.today().set({ month : index, day : 1 });
@@ -634,6 +633,7 @@
      */
     $$.moveToNthOccurrence = function (dayOfWeek, occurrence) {
         var shift = 0;
+
         if (occurrence > 0) {
             shift = occurrence - 1;
         } else if (occurrence === -1) {
