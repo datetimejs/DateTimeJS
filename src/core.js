@@ -422,8 +422,8 @@ var DateTime;
                 i += 1;
             }
 
-            f[f.length] = format;
-            f[f.length] = fn;
+            f.push(format);
+            f.push(fn);
         } else {
             for (; i < f.length; i += 1) {
                 if (f[i] === format) {

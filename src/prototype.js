@@ -54,7 +54,7 @@
         i;
 
     // Make all the DateTime property functions. 
-    for (i = 0; i < DATETIME_PROPERTIES.length; i += 1) {
+    for (var i = 0; i < DATETIME_PROPERTIES.length; i += 1) {
         temp = function (prop, method) {
             this[prop + 's'] = this[prop] = function (val) {
                 var config,
@@ -62,7 +62,7 @@
                     o2,
                     v,
                     k,
-                    i = 0;
+                    j = 0;
 
                 if (arguments.length === 1 && typeof val === 'number') {
                     this.date['set' + method](val);
@@ -95,8 +95,8 @@
                     v = '';
                     k = prop;
 
-                    for (; i < DATETIME_PROPERTIES.length; i += 1) {
-                        v = DATETIME_PROPERTIES[i].toLowerCase();
+                    for (j; j < DATETIME_PROPERTIES.length; j += 1) {
+                        v = DATETIME_PROPERTIES[j].toLowerCase();
 
                         if (o1[v] !== o2[v]) {
                             return false;
@@ -126,7 +126,8 @@
         }.apply($$, [DATETIME_PROPERTIES[i], DATE_METHODS[i]]);
     }
 
-    for (i = 0; i < NTH.length; i += 1) {
+    /*
+    for (var i = 0; i < NTH.length; i += 1) {
         temp = function (name, index) {
             this[name] = function (val) {
                 var dayOfWeek,
@@ -153,8 +154,9 @@
             };
         }.apply($$, [NTH[i], i]);
     }
+    */
 
-    for (i = 0; i < DAY_NAMES.length; i += 1) {
+    for (var i = 0; i < DAY_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
                 var t = $.today(),
@@ -218,7 +220,7 @@
         }.apply($, [DAY_NAMES[i], i]);
     }
 
-    for (i = 0; i < MONTH_NAMES.length; i += 1) {
+    for (var i = 0; i < MONTH_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
                 return this.today().set({ month : index, day : 1 });

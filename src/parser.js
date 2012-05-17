@@ -136,7 +136,7 @@
                     rx = [],
                     i = 0;
 
-                for (; i < px.length; i += 1) {
+                for (var i = 0; i < px.length; i += 1) {
                     rx.push(_.each(px[i], qx));
                 }
 
@@ -168,7 +168,7 @@
                     var r = null,
                         i = 0;
 
-                    for (; i < px.length; i += 1) {
+                    for (var i = 0; i < px.length; i += 1) {
                         if (px[i] == null) {
                             continue;
                         }
@@ -195,7 +195,7 @@
                         r = null,
                         i = 0;
 
-                    for (; i < px.length; i += 1) {
+                    for (var i = 0; i < px.length; i += 1) {
                         if (px[i] == null) {
                             continue;
                         }
@@ -235,7 +235,7 @@
                         rx = [],
                         i = 0;
 
-                    for (; i < px.length; i += 1) {
+                    for (var i = 0; i < px.length; i += 1) {
                         try {
                             r = px[i].call(this, s);
                         } catch (e) {
@@ -311,7 +311,7 @@
                         i = 0;
 
                     // go through the rules in the given set
-                    for (; i < px.length; i += 1) {
+                    for (var i = 0; i < px.length; i += 1) {
 
                         // last is a flag indicating whether this must be the last element
                         // if there is only 1 element, then it MUST be the last one
@@ -502,7 +502,7 @@
             }
 
             if (args) {
-                for (i, px = args.shift() ; i < px.length; i += 1) {
+                for (var i = 0, px = args.shift(); i < px.length; i += 1) {
                     args.unshift(px[i]);
                     rx.push(op.apply(null, args));
                     args.shift();
@@ -517,7 +517,7 @@
 
     var gx = "optional not ignore cache".split(/\s/);
 
-    for (var i = 0 ; i < gx.length; i += 1) {
+    for (var i = 0; i < gx.length; i += 1) {
         _[gx[i]] = _generator(_[gx[i]]);
     }
 
@@ -533,7 +533,7 @@
 
     var vx = ['each','any', 'all'];
     
-    for (var j = 0 ; j < vx.length; j++) {
+    for (var j = 0; j < vx.length; j++) {
         _[vx[j]] = _vector(_[vx[j]]);
     }
 }());
@@ -546,7 +546,7 @@
         flattenAndCompact = function (ax) {
             var rx = [];
 
-            for (; i < ax.length; i += 1) {
+            for (var i = 0; i < ax.length; i += 1) {
                 if (ax[i] instanceof Array) {
                     rx = rx.concat(flattenAndCompact(ax[i]));
                 } else {
@@ -633,7 +633,7 @@
 
             x = (x instanceof Array) ? x : [ x ];
 
-            for (; i < x.length; i += 1) {
+            for (var i = 0; i < x.length; i += 1) {
                 if (x[i]) {
                     x[i].call(this);
                 }
@@ -692,8 +692,7 @@
             return r;
         },
         finish : function (x) {
-            var i = 0,
-                today;
+            var today;
 
             x = (x instanceof Array) ? flattenAndCompact(x) : [ x ];
 
@@ -701,7 +700,9 @@
                 return null;
             }
 
-            for (; i < x.length; i += 1) {
+            console.log(this);
+
+            for (var i = 0; i < x.length; i += 1) {
                 if (typeof x[i] == "function") {
                     x[i].call(this);
                 }
@@ -734,6 +735,7 @@
 
             if (!expression && this.weekday && !this.day && !this.days) {
                 var temp = Date[this.weekday]();
+
                 this.day = temp.getDate();
 
                 if (!this.month) {
@@ -838,16 +840,17 @@
     g.generalDelimiter = _.rtoken(/^(([\s\,]|at|@|on)+)/);
 
     var _C = {};
+
     g.ctoken = function (keys) {
         var fn = _C[keys];
 
-        if (! fn) {
+        if (!fn) {
             var c = $C.regexPatterns,
                 kx = keys.split(/\s+/),
                 px = [],
                 i = 0;
 
-            for (; i < kx.length; i += 1) {
+            for (var i = 0; i < kx.length; i += 1) {
                 px.push(_.replace(_.rtoken(c[kx[i]]), kx[i]));
             }
 
@@ -1012,7 +1015,7 @@
             var rx = [],
                 i = 0;
 
-            for (; i < fx.length; i += 1) {
+            for (var i = 0; i < fx.length; i += 1) {
                 rx.push(_get(fx[i]));
             }
             
@@ -1022,7 +1025,7 @@
         }
     };
 
-        // check for these formats first
+    // check for these formats first
     g._formats = g.formats([
         '"yyyy-MM-ddTHH:mm:ssZ"',
         'yyyy-MM-ddTHH:mm:ssZ',
@@ -1166,7 +1169,7 @@
      * @param  {String}   The string value to convert into a Date object [Required]
      * @return {DateTime} A DateTime object or null if the string cannot be converted into a DateTime.
      */
-    $.parse = function (s) {
+    $.parse = function (s, callback) {
         var r = null;
 
         if (!s) {
