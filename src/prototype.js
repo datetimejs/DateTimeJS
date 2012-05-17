@@ -674,7 +674,7 @@
      * @return {DateTime}    this
      */
     $$.moveToLastDayOfMonth = function () {
-        return this.set({ day : $.getDaysInMonth(this.year(), this.month())});
+        return this.set({ day : $.daysInMonth(this.year(), this.month())});
     };
 
     /**
