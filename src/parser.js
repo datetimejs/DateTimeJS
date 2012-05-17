@@ -140,7 +140,7 @@
                 var px = arguments[0], 
                 qx = Array.prototype.slice.call(arguments, 1), rx = [];
                 
-                for (var i = 0 ; i < px.length ; i++) {
+                for (var i = 0; i < px.length; i += 1) {
                     rx.push(_.each(px[i], qx));
                 }
                 
@@ -171,7 +171,7 @@
                 return function (s) { 
                     var r = null;
 
-                    for (var i = 0; i < px.length; i++) { 
+                    for (var i = 0; i < px.length; i += 1) { 
                         if (px[i] == null) { 
                             continue; 
                         }
@@ -196,7 +196,7 @@
                 return function (s) { 
                     var rx = [], r = null;
 
-                    for (var i = 0; i < px.length ; i++) { 
+                    for (var i = 0; i < px.length; i += 1) { 
                         if (px[i] == null) { 
                             continue; 
                         }
@@ -234,7 +234,7 @@
                         q = null,
                         rx = []; 
 
-                    for (var i = 0; i < px.length ; i++) {
+                    for (var i = 0; i < px.length; i += 1) {
                         try { 
                             r = px[i].call(this, s); 
                         } catch (e) { 
@@ -306,7 +306,7 @@
                     var r = null, p = null, q = null, rx = null, best = [[], s], last = false;
 
                     // go through the rules in the given set
-                    for (var i = 0; i < px.length ; i++) {
+                    for (var i = 0; i < px.length; i += 1) {
 
                         // last is a flag indicating whether this must be the last element
                         // if there is only 1 element, then it MUST be the last one
@@ -359,7 +359,7 @@
                             // i.e., all but the one we just matched against
                             var qx = [];
 
-                            for (var j = 0; j < px.length ; j++) { 
+                            for (var j = 0; j < px.length; j += 1) { 
                                 if (i != j) { 
                                     qx.push(px[j]); 
                                 }
@@ -498,7 +498,7 @@
             }
 
             if (args) { 
-                for (var i = 0, px = args.shift() ; i < px.length ; i++) {
+                for (var i = 0, px = args.shift(); i < px.length; i += 1) {
                     args.unshift(px[i]); 
                     rx.push(op.apply(null, args)); 
                     args.shift();
@@ -513,7 +513,7 @@
     
     var gx = "optional not ignore cache".split(/\s/);
     
-    for (var i = 0 ; i < gx.length ; i++) { 
+    for (var i = 0; i < gx.length; i += 1) { 
         _[gx[i]] = _generator(_[gx[i]]); 
     }
 
@@ -529,7 +529,7 @@
     
     var vx = "each any all".split(/\s/);
     
-    for (var j = 0 ; j < vx.length ; j++) { 
+    for (var j = 0; j < vx.length; j += 1) { 
         _[vx[j]] = _vector(_[vx[j]]); 
     }
         
@@ -542,7 +542,7 @@
         flattenAndCompact = function (ax) { 
             var rx = []; 
             
-            for (var i = 0; i < ax.length; i++) {
+            for (var i = 0; i < ax.length; i += 1) {
                 if (ax[i] instanceof Array) {
                     rx = rx.concat(flattenAndCompact(ax[i]));
                 } else { 
@@ -593,7 +593,7 @@
             return function () { 
                 this.day = Number(s.match(/\d+/)[0]); 
             };
-        }, 
+        },
         month : function (s) {
             return function () {
                 this.month = (s.length == 3) ? "jan feb mar apr may jun jul aug sep oct nov dec".indexOf(s)/4 : Number(s) - 1;
@@ -628,7 +628,7 @@
         finishExact : function (x) {  
             x = (x instanceof Array) ? x : [ x ]; 
 
-            for (var i = 0 ; i < x.length ; i++) { 
+            for (var i = 0; i < x.length; i += 1) { 
                 if (x[i]) { 
                     x[i].call(this); 
                 }
@@ -693,7 +693,7 @@
                 return null; 
             }
 
-            for (var i = 0 ; i < x.length ; i++) { 
+            for (var i = 0; i < x.length; i += 1) { 
                 if (typeof x[i] == "function") {
                     x[i].call(this);
                 }
@@ -836,7 +836,7 @@
             var c = $C.regexPatterns;
             var kx = keys.split(/\s+/), px = []; 
 
-            for (var i = 0; i < kx.length ; i++) {
+            for (var i = 0; i < kx.length; i += 1) {
                 px.push(_.replace(_.rtoken(c[kx[i]]), kx[i]));
             }
 
@@ -994,7 +994,7 @@
     g.formats = function (fx) {
         if (fx instanceof Array) {
             var rx = []; 
-            for (var i = 0 ; i < fx.length ; i++) {
+            for (var i = 0; i < fx.length; i += 1) {
                 rx.push(_get(fx[i])); 
             }
             return _.any.apply(null, rx);
