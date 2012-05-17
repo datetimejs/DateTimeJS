@@ -544,7 +544,7 @@
         var prop;
 
         for (prop in config) {
-            if (this[prop] && typeof config[prop] === 'number') {
+            if (this[prop] && prop.substring(prop.length - 1) !== 's' && typeof config[prop] === 'number') {
                 this[prop](config[prop]);
             }
         }
