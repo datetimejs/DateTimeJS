@@ -1,6 +1,7 @@
-describe('DateTime Constructors', function() {
+describe('DateTime Constructor', function() {
+    var now = new Date();
+
     describe('DateTime.today()', function () {
-        var now = new Date();
 
         it('should be euivalent to "today"', function() {
             var d1 = DateTime.today();
@@ -59,6 +60,21 @@ describe('DateTime Constructors', function() {
         });
     });
 
+    describe('.toDate', function () {
+        it('.toDate() should equal new Date()', function() {
+            var d1 = new DateTime().toDate();
+            var d2 = new Date();
+
+            expect(d1.setMilliseconds(0) === d2.setMilliseconds(0)).toEqual(true);
+        });
+
+        it('.date should equal new Date()', function() {
+            var d1 = new DateTime().date;
+            var d2 = new Date();
+
+            expect(d1.setMilliseconds(0) === d2.setMilliseconds(0)).toEqual(true);
+        });
+    });
 
     describe('DateTime.create()', function () {
         it('should be equivalent to calling DateTime.create()', function() {
