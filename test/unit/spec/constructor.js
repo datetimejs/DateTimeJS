@@ -60,6 +60,56 @@ describe('DateTime Constructor', function() {
         });
     });
 
+    describe('DateTime.now()', function () {
+
+        it('should be euivalent to "now"', function() {
+            var d1 = DateTime.now().milliseconds(0);
+            var d2 = new Date();
+            
+            d2.setMilliseconds(0);
+
+            expect(DateTime.equals(d1, d2)).toEqual(true);
+        });
+
+        it('.year() should be ' + now.getFullYear(), function() {
+            var d1 = DateTime.now();
+
+            expect(d1.year()).toEqual(now.getFullYear());
+        });
+
+        it('.month() should be ' + now.getMonth(), function() {
+            var d1 = DateTime.now();
+
+            expect(d1.month()).toEqual(now.getMonth());
+        });
+
+        it('.day() should be ' + now.getDate(), function() {
+            var d1 = DateTime.now();
+
+            expect(d1.day()).toEqual(now.getDate());
+        });
+
+
+
+        it('.hours() should be ' + now.getHours(), function() {
+            var d1 = DateTime.now();
+
+            expect(d1.hours()).toEqual(now.getHours());
+        });
+
+        it('.minutes() should be ' + now.getMinutes(), function() {
+            var d1 = DateTime.now();
+
+            expect(d1.minutes()).toEqual(now.getMinutes());
+        });
+
+        it('.seconds() should be ' + now.getSeconds (), function() {
+            var d1 = DateTime.now();
+
+            expect(d1.seconds()).toEqual(now.getSeconds());
+        });
+    });
+
     describe('.toDate', function () {
         it('.toDate() should equal new Date()', function() {
             var d1 = new DateTime().toDate();
