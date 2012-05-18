@@ -25,15 +25,17 @@
  */
 
 /**
- * A JavaScript DateTime class which reproduces and extends functionality of the native JavaScript Date object. 
+ * A JavaScript DateTime library which reproduces and extends functionality of the native JavaScript Date object. 
  */
-
 var DateTime;
 
 (function () {
     "use strict";
 
-    // Contructor
+    /**
+     * DateTime constructor
+     * @return {DateTime} A new DateTime instance.
+     */
     DateTime = function (val) {
         // To store backing Date object. 
         // Initialize immediately so we have the exact Date instance this DateTime object was instantiated.
@@ -82,11 +84,6 @@ var DateTime;
 
     // create a simple alias for the DateTime class. 
     var $ = DateTime,
-        isArray = function (obj) {
-            // Courtesy of 
-            // http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
-            return Object.prototype.toString.call(obj) === '[object Array]';
-        },
         f = [],
         wrap,
         p,
@@ -105,7 +102,7 @@ var DateTime;
     /** 
      * Creates a new DateTime object instance. 
      * @param  {Stirng|Number|Object|DateTime|Date} Accepts any value permitted by new DateTime constructor. 
-     * @return {DateTime} The new DateTime instance.
+     * @return {DateTime} A new DateTime instance.
      */
     $.create = function (val) {
         return new DateTime(val);
@@ -113,7 +110,7 @@ var DateTime;
 
     /** 
      * Creates a DateTime that is set to the current date. The time is set to the start of the day (00:00 or 12:00 AM).
-     * @return {DateTime}    The current date.
+     * @return {DateTime} The current date.
      */
     $.today = function () {
         return new DateTime().clearTime();
@@ -121,13 +118,13 @@ var DateTime;
 
     /** 
      * Creates a DateTime that is set to the current date and time. The time is set to now.
-     * @return {DateTime}    The current date and time.
+     * @return {DateTime} The current date and time.
      */
     $.now = function () {
         return new DateTime();
     };
 
-    /** 
+    /**
      * Creates a new DateTime (DateTime.today()) and moves the DateTime instance to the next 
      * instance of the DateTime as specified by the subsequent date element function 
      * (eg. .day(), .month()), month name function (eg. .january(), .jan()) or day name function (eg. .friday(), fri()).
@@ -388,4 +385,4 @@ var DateTime;
 
         return fn;
     };
-}());
+})();
