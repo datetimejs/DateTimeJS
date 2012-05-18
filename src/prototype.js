@@ -54,7 +54,7 @@
         i = 0;
 
     // Make all the DateTime property functions. 
-    for (; i < DATETIME_PROPERTIES.length; i += 1) {
+    for (i; i < DATETIME_PROPERTIES.length; i += 1) {
         temp = function (prop, method) {
             this[prop + 's'] = this[prop] = function (val) {
                 var config,
@@ -126,7 +126,6 @@
         }.apply($$, [DATETIME_PROPERTIES[i], DATE_METHODS[i]]);
     }
 
-    
     for (i = 0; i < NTH.length; i += 1) {
         temp = function (name, index) {
             this[name] = function (val) {
@@ -154,7 +153,7 @@
             };
         }.apply($$, [NTH[i], i]);
     }
-    
+
     for (i = 0; i < DAY_NAMES.length; i += 1) {
         temp = function (name, index) {
             this[name] = this[name.substring(0, 3)] = function () {
@@ -282,9 +281,9 @@
      */
     $$.toConfig = function () {
         var obj = {},
-            i = 0;
+            i;
 
-        for (; i < DATETIME_PROPERTIES.length; i += 1) {
+        for (i = 0; i < DATETIME_PROPERTIES.length; i += 1) {
             obj[DATETIME_PROPERTIES[i].toLowerCase()] = this[DATETIME_PROPERTIES[i]]();
         }
 
@@ -596,7 +595,7 @@
 
             return this.add(config);
         }
-        
+
         var a, b, c, d, e, f, g, n, s, w, $y, $m, $d;
 
         $y = (!$y) ? this.year() : $y;
